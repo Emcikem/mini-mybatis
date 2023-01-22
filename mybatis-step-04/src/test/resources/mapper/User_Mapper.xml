@@ -3,7 +3,7 @@
 <mapper namespace="com.emcikem.mybatisstep04.dao.IUserDao">
 
     <select id="queryUserInfoById" parameterType="java.lang.Long" resultType="com.emcikem.mybatisstep04.po.User">
-        SELECT id, userId, userHead, createTime
+        SELECT id, userId, userHead, createTime, updateTime, userName
         FROM user
         where id = #{id}
     </select>
