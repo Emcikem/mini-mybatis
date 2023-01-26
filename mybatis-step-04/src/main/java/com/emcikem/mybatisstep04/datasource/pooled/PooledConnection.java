@@ -32,7 +32,7 @@ public class PooledConnection implements InvocationHandler {
 
     public PooledConnection(Connection connection, PooledDataSource dataSource) {
         this.hashCode = connection.hashCode();
-        this.connection = connection;
+        this.realConnection = connection;
         this.dataSource = dataSource;
         this.createdTimestamp = System.currentTimeMillis();
         this.lastUsedTimestamp = System.currentTimeMillis();
@@ -45,7 +45,7 @@ public class PooledConnection implements InvocationHandler {
         String methodName = method.getName();
         // 如果是调用 CLOSE 关闭链接方法，则将链接加入连接池中，并返回null
         if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
-            dataSource.putConnection(this);
+            dataSource.pushConnection(this);
             return null;
         } else {
             if (!Object.class.equals(method.getDeclaringClass())) {

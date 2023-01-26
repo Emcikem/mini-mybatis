@@ -72,7 +72,7 @@ public class PooledDataSource implements DataSource {
                     newConnection.setCreatedTimestamp(connection.getCreatedTimestamp());
                     newConnection.setLastUsedTimestamp(connection.getLastUsedTimestamp());
                     connection.invalidate();
-                    logger.info("Returned connection " + newConnection.getRealHashCode() + " to pool.");
+                    this.logger.info("Returned connection " + newConnection.getRealHashCode() + " to pool.");
 
                     // 通知其他线程可以来抢DB连接了
                     // 这里也是一个等待唤醒机制
@@ -85,11 +85,11 @@ public class PooledDataSource implements DataSource {
                     }
                     // 将connection关闭
                     connection.getRealConnection().close();
-                    logger.info("Closed connection " + connection.getRealHashCode() + ".");
+                    this.logger.info("Closed connection " + connection.getRealHashCode() + ".");
                     connection.invalidate();
                 }
             } else {
-                logger.info("A bad connection (" + connection.getRealHashCode() + ") attempted to return to the pool, discarding connection.");
+                this.logger.info("A bad connection (" + connection.getRealHashCode() + ") attempted to return to the pool, discarding connection.");
                 state.badConnectionCount++;
             }
         }
