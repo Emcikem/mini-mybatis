@@ -12,11 +12,11 @@ import java.util.Properties;
  */
 public class PooledDataSourceFactory implements DataSourceFactory {
 
-    private Properties properties;
+    private Properties props;
 
     @Override
     public void setProperties(Properties props) {
-        this.properties = props;
+        this.props = props;
     }
 
     @Override

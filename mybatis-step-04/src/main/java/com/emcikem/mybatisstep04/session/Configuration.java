@@ -2,13 +2,13 @@ package com.emcikem.mybatisstep04.session;
 
 import com.emcikem.mybatisstep04.binding.MapperRegistry;
 import com.emcikem.mybatisstep04.datasource.druid.DruidDataSourceFactory;
+import com.emcikem.mybatisstep04.datasource.pooled.PooledDataSource;
+import com.emcikem.mybatisstep04.datasource.unpooled.UnPooledDataSourceFactory;
 import com.emcikem.mybatisstep04.mapping.Environment;
 import com.emcikem.mybatisstep04.mapping.MappedStatement;
 import com.emcikem.mybatisstep04.transaction.jdbc.JdbcTransactionFactory;
 import com.emcikem.mybatisstep04.type.TypeAliasRegistry;
-import jdk.internal.org.objectweb.asm.TypeReference;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,10 +43,11 @@ public class Configuration {
 
     public Configuration() {
         typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
+
         typeAliasRegistry.registerAlias("DRUID", DruidDataSourceFactory.class);
+        typeAliasRegistry.registerAlias("UNPOOLED", UnPooledDataSourceFactory.class);
+        typeAliasRegistry.registerAlias("POOLED", PooledDataSource.class);
     }
-
-
 
     public void addMappers(String packageName) {
         mapperRegistry.addMappers(packageName);
