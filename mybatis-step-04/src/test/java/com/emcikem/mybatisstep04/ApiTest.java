@@ -4,6 +4,7 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.emcikem.mybatisstep04.dao.IUserDao;
 import com.emcikem.mybatisstep04.datasource.pooled.PooledDataSource;
+import com.emcikem.mybatisstep04.datasource.unpooled.UnPooledDataSource;
 import com.emcikem.mybatisstep04.io.Resources;
 import com.emcikem.mybatisstep04.po.User;
 import com.emcikem.mybatisstep04.session.SqlSession;
@@ -40,7 +41,7 @@ public class ApiTest {
 
 
     @Test
-    public void test_SqlSessionFactory() throws IOException {
+    public void test_SqlSessionFactory() throws IOException, InterruptedException {
         // 1. 从SqlSessionFactory中获取SqlSession
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(Resources.getResourceAsReader("mybatis-config-datasource.xml"));
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -50,8 +51,10 @@ public class ApiTest {
 
         // 3.测试验证
         for (int i = 0; i < 50; i++) {
+            long start = System.currentTimeMillis();
             User user = userDao.queryUserInfoById(1L);
-            System.out.printf("%s, 测试结果：%s\n", i, user);
+            System.out.printf("%s,time:%s, 测试结果：%s\n", i, System.currentTimeMillis() - start, user);
+//            Thread.sleep(100);
         }
     }
 
@@ -59,13 +62,19 @@ public class ApiTest {
     @Test
     public void test_pooled() throws SQLException, InterruptedException {
         PooledDataSource pooledDataSource = new PooledDataSource();
-        pooledDataSource.setDriver("com.mysql.jdbc.Driver");
-        pooledDataSource.setUrl("jdbc:mysql://localhost:3306/mybatis?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai");
+        pooledDataSource.setDriver("com.mysql.cj.jdbc.Driver");
+        pooledDataSource.setUrl("jdbc:mysql://localhost:3306/mybatis?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai");
         pooledDataSource.setUsername("root");
         pooledDataSource.setPassword("lct09051415");
 
+        UnPooledDataSource unPooledDataSource = new UnPooledDataSource();
+        unPooledDataSource.setDriver("com.mysql.cj.jdbc.Driver");
+        unPooledDataSource.setUrl("jdbc:mysql://localhost:3306/mybatis?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai");
+        unPooledDataSource.setUsername("root");
+        unPooledDataSource.setPassword("lct09051415");
+
         while (true) {
-            Connection connection = pooledDataSource.getConnection();
+            Connection connection = unPooledDataSource.getConnection();
             System.out.println(connection);
             Thread.sleep(1000);
             connection.close();
