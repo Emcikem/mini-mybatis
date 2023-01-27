@@ -3,6 +3,7 @@ package com.emcikem.mybatisstep04.datasource.pooled;
 import com.emcikem.mybatisstep04.datasource.unpooled.UnPooledDataSource;
 import org.slf4j.LoggerFactory;
 
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class PooledDataSource implements DataSource {
 
-    private org.slf4j.Logger logger = LoggerFactory.getLogger(PooledDataSource.class);
+//    private final org.slf4j.Logger logger = LoggerFactory.getLogger(PooledDataSource.class);
 
     // 池状态
     private final PoolState state = new PoolState(this);
@@ -72,7 +73,7 @@ public class PooledDataSource implements DataSource {
                     newConnection.setCreatedTimestamp(connection.getCreatedTimestamp());
                     newConnection.setLastUsedTimestamp(connection.getLastUsedTimestamp());
                     connection.invalidate();
-                    this.logger.info("Returned connection " + newConnection.getRealHashCode() + " to pool.");
+//                    this.logger.info("Returned connection " + newConnection.getRealHashCode() + " to pool.");
 
                     // 通知其他线程可以来抢DB连接了
                     // 这里也是一个等待唤醒机制
@@ -85,11 +86,11 @@ public class PooledDataSource implements DataSource {
                     }
                     // 将connection关闭
                     connection.getRealConnection().close();
-                    this.logger.info("Closed connection " + connection.getRealHashCode() + ".");
+//                    this.logger.info("Closed connection " + connection.getRealHashCode() + ".");
                     connection.invalidate();
                 }
             } else {
-                this.logger.info("A bad connection (" + connection.getRealHashCode() + ") attempted to return to the pool, discarding connection.");
+//                this.logger.info("A bad connection (" + connection.getRealHashCode() + ") attempted to return to the pool, discarding connection.");
                 state.badConnectionCount++;
             }
         }
@@ -109,13 +110,13 @@ public class PooledDataSource implements DataSource {
                 // 如果有空闲链接：返回第一个
                 if (!state.idleConnections.isEmpty()) {
                     conn = state.idleConnections.remove(0);
-                    logger.info("Checked out connection " + conn.getRealHashCode() + " from pool.");
+//                    logger.info("Checked out connection " + conn.getRealHashCode() + " from pool.");
                     // 如果无空闲链接：创建新的链接
                 } else {
                     // 活跃链接数不足
                     if (state.activeConnections.size() < poolMaximumActiveConnections) {
                         conn = new PooledConnection(dataSource.getConnection(), this);
-                        logger.info("Created connection " + conn.getRealHashCode() + ".");
+//                        logger.info("Created connection " + conn.getRealHashCode() + ".");
                     // 活跃连接数已满
                     } else {
                         // 取得活跃链接列表的第一个，也就是最老的一个连接
@@ -136,7 +137,7 @@ public class PooledDataSource implements DataSource {
                             // 删掉最老的链接，然后重新实例化一个新的链接
                             conn = new PooledConnection(oldestActiveConnection.getRealConnection(), this);
                             oldestActiveConnection.invalidate();
-                            logger.info("Claimed overdue connection " + conn.getRealHashCode() + ".");
+//                            logger.info("Claimed overdue connection " + conn.getRealHashCode() + ".");
                         // 如果checkout超时时间不够长，则等待
                         } else {
                             try {
@@ -144,7 +145,7 @@ public class PooledDataSource implements DataSource {
                                     state.hadToWaitCount++;
                                     countedWait = true;
                                 }
-                                logger.info("Waiting as long as " + poolTimeToWait + " milliseconds for connection.");
+//                                logger.info("Waiting as long as " + poolTimeToWait + " milliseconds for connection.");
                                 long wt = System.currentTimeMillis();
                                 state.wait(poolTimeToWait);
                                 state.accumulatedWaitTime += System.currentTimeMillis() - wt;
@@ -168,14 +169,14 @@ public class PooledDataSource implements DataSource {
                         state.requestCount++;
                         state.accumulatedRequestTime += System.currentTimeMillis() - t;
                     } else {
-                        logger.info("A bad connection (" + conn.getRealHashCode() + ") was returned from the pool, getting another connection.");
+//                        logger.info("A bad connection (" + conn.getRealHashCode() + ") was returned from the pool, getting another connection.");
                         // 如果没拿到，统计信息：失败链接 + 1
                         state.badConnectionCount++;
                         localBadConnectionCount++;
                         conn = null;
                         // 失败次数较多，抛异常
                         if (localBadConnectionCount > (poolMaximumIdleConnections + 3)) {
-                            logger.debug("PooledDataSource: Could not get a good connection to the database.");
+//                            logger.debug("PooledDataSource: Could not get a good connection to the database.");
                             throw new SQLException("PooledDataSource: Could not get a good connection to the database.");
                         }
                     }
@@ -183,7 +184,7 @@ public class PooledDataSource implements DataSource {
             }
         }
         if (conn == null) {
-            logger.debug("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
+//            logger.debug("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
             throw new SQLException("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
         }
 
@@ -223,7 +224,7 @@ public class PooledDataSource implements DataSource {
                 } catch (Exception ignore) {
                 }
             }
-            logger.info("PooledDataSource forcefully closed/removed all connections.");
+//            logger.info("PooledDataSource forcefully closed/removed all connections.");
         }
     }
 
@@ -238,7 +239,7 @@ public class PooledDataSource implements DataSource {
         try {
             result = !conn.getRealConnection().isClosed();
         } catch (SQLException e) {
-            logger.info("Connection " + conn.getRealHashCode() + " is BAD: " + e.getMessage());
+//            logger.info("Connection " + conn.getRealHashCode() + " is BAD: " + e.getMessage());
             result = false;
         }
 
@@ -246,19 +247,19 @@ public class PooledDataSource implements DataSource {
             if (poolPingEnabled) {
                 if (poolPingConnectionsNotUsedFor >= 0 && conn.getTimeElapsedSinceLastUse() > poolPingConnectionsNotUsedFor) {
                     try {
-                        logger.info("Testing connection " + conn.getRealHashCode() + " ...");
+//                        logger.info("Testing connection " + conn.getRealHashCode() + " ...");
                         Connection realConn = conn.getRealConnection();
                         Statement statement = realConn.createStatement();
                         ResultSet resultSet = statement.executeQuery(poolPingQuery);
                         resultSet.close();
                     } catch (Exception e) {
-                        logger.info("Execution of ping query '" + poolPingQuery + "' failed: " + e.getMessage());
+//                        logger.info("Execution of ping query '" + poolPingQuery + "' failed: " + e.getMessage());
                         try {
                             conn.getRealConnection().close();
                         } catch (SQLException ignore) {
                         }
                         result = false;
-                        logger.info("Connection " + conn.getRealHashCode() + " is BAD: " + e.getMessage());
+//                        logger.info("Connection " + conn.getRealHashCode() + " is BAD: " + e.getMessage());
                     }
                 }
             }

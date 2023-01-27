@@ -1,23 +1,15 @@
 package com.emcikem.mybatisstep04.datasource.pooled;
 
-import com.emcikem.mybatisstep04.datasource.DataSourceFactory;
+import com.emcikem.mybatisstep04.datasource.unpooled.UnPooledDataSourceFactory;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * @author Emcikem
  * @create 2023/1/24
  * @desc 有连接池的数据源工厂
  */
-public class PooledDataSourceFactory implements DataSourceFactory {
-
-    private Properties props;
-
-    @Override
-    public void setProperties(Properties props) {
-        this.props = props;
-    }
+public class PooledDataSourceFactory extends UnPooledDataSourceFactory {
 
     @Override
     public DataSource getDataSource() {

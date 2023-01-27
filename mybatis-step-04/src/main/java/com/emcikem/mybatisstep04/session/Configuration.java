@@ -2,7 +2,7 @@ package com.emcikem.mybatisstep04.session;
 
 import com.emcikem.mybatisstep04.binding.MapperRegistry;
 import com.emcikem.mybatisstep04.datasource.druid.DruidDataSourceFactory;
-import com.emcikem.mybatisstep04.datasource.pooled.PooledDataSource;
+import com.emcikem.mybatisstep04.datasource.pooled.PooledDataSourceFactory;
 import com.emcikem.mybatisstep04.datasource.unpooled.UnPooledDataSourceFactory;
 import com.emcikem.mybatisstep04.mapping.Environment;
 import com.emcikem.mybatisstep04.mapping.MappedStatement;
@@ -19,34 +19,24 @@ import java.util.Map;
  */
 public class Configuration {
 
-    /**
-     * 环境
-     */
+    //环境
     protected Environment environment;
 
-    /**
-     * 映射注册机
-     */
+    // 映射注册机
     protected MapperRegistry mapperRegistry = new MapperRegistry(this);
 
-    /**
-     * 映射的语句，存在Map里
-     * key:接口方法的全路径名称（含包名）
-     */
+    // 映射的语句，存在Map里
     protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
 
-    /**
-     * 类型别名注册机
-     */
+    // 类型别名注册机
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
-
 
     public Configuration() {
         typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
 
         typeAliasRegistry.registerAlias("DRUID", DruidDataSourceFactory.class);
         typeAliasRegistry.registerAlias("UNPOOLED", UnPooledDataSourceFactory.class);
-        typeAliasRegistry.registerAlias("POOLED", PooledDataSource.class);
+        typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
     }
 
     public void addMappers(String packageName) {

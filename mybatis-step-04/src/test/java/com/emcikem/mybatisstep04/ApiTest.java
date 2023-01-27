@@ -3,6 +3,7 @@ package com.emcikem.mybatisstep04;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.emcikem.mybatisstep04.dao.IUserDao;
+import com.emcikem.mybatisstep04.datasource.pooled.PooledDataSource;
 import com.emcikem.mybatisstep04.io.Resources;
 import com.emcikem.mybatisstep04.po.User;
 import com.emcikem.mybatisstep04.session.SqlSession;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author Emcikem
@@ -49,6 +52,23 @@ public class ApiTest {
         for (int i = 0; i < 50; i++) {
             User user = userDao.queryUserInfoById(1L);
             System.out.printf("%s, 测试结果：%s\n", i, user);
+        }
+    }
+
+
+    @Test
+    public void test_pooled() throws SQLException, InterruptedException {
+        PooledDataSource pooledDataSource = new PooledDataSource();
+        pooledDataSource.setDriver("com.mysql.jdbc.Driver");
+        pooledDataSource.setUrl("jdbc:mysql://localhost:3306/mybatis?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai");
+        pooledDataSource.setUsername("root");
+        pooledDataSource.setPassword("lct09051415");
+
+        while (true) {
+            Connection connection = pooledDataSource.getConnection();
+            System.out.println(connection);
+            Thread.sleep(1000);
+            connection.close();
         }
     }
 }
