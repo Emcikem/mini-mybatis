@@ -50,7 +50,7 @@ public class ApiTest {
         IUserDao userDao = sqlSession.getMapper(IUserDao.class);
 
         // 3.测试验证
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1; i++) {
             long start = System.currentTimeMillis();
             User user = userDao.queryUserInfoById(1L);
             System.out.printf("%s,time:%s, 测试结果：%s\n", i, System.currentTimeMillis() - start, user);
@@ -74,10 +74,10 @@ public class ApiTest {
         unPooledDataSource.setPassword("lct09051415");
 
         while (true) {
-            Connection connection = unPooledDataSource.getConnection();
+            Connection connection = pooledDataSource.getConnection();
             System.out.println(connection);
-            Thread.sleep(1000);
-            connection.close();
+//            Thread.sleep(1000);
+//            connection.close();
         }
     }
 }
