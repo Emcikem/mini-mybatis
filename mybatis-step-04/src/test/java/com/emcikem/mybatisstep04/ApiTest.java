@@ -76,8 +76,9 @@ public class ApiTest {
         while (true) {
             Connection connection = pooledDataSource.getConnection();
             System.out.println(connection);
-//            Thread.sleep(1000);
-//            connection.close();
+            Thread.sleep(1000);
+            connection.close();
+            break;
         }
     }
 }
