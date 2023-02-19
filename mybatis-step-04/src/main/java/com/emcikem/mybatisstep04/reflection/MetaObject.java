@@ -6,8 +6,10 @@ import com.emcikem.mybatisstep04.reflection.wrapper.BeanWrapper;
 import com.emcikem.mybatisstep04.reflection.wrapper.CollectionWrapper;
 import com.emcikem.mybatisstep04.reflection.wrapper.MapWrapper;
 import com.emcikem.mybatisstep04.reflection.wrapper.ObjectWrapper;
+import com.emcikem.mybatisstep04.reflection.wrapper.ObjectWrapperFactory;
 import javafx.print.Collation;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
